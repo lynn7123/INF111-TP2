@@ -1,0 +1,4 @@
+#  structure <id livreur> <type livreur> <nom livreur>
+101 VELO Pierre
+102 CAMION Paul
+103 VOITURE Jacques
