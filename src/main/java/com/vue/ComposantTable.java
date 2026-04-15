@@ -2,6 +2,8 @@ package com.vue;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
@@ -39,14 +41,42 @@ public class ComposantTable extends JPanel {
         this.table = new JTable();
         this.table.setFont(Config.fonte); // considère la fonte définie dans Config
 
-        // TODO : À compléter/modifier
+        // modele non-editable
+        DefaultTableModel modele = new DefaultTableModel(nomsColonnes ,0){
+            @Override
+            public boolean isCellEditable( int row , int column){
+                return false;
+            }
+        };
+        this.table.setModel(modele);
 
+        // selection 1 seul ligne a la fois
+        this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //empecher reorganisation des colonnes
+        this.table.getTableHeader().setReorderingAllowed(false);
+        // centrer colonnes
+        if (donneesCentrees !=null){
+            DefaultTableCellRenderer renduCentre = new DefaultTableCellRenderer();
+            renduCentre.setHorizontalAlignment(SwingConstants.CENTER);
+            for ( int i=0; i< donneesCentrees.length ; i++){
+                if (donneesCentrees[i]){
+                    this.table.getColumnModel().getColumn(i).setCellRenderer(renduCentre);
+                }
+            }
+        }
+        // Panneau defilement vertical
+        JScrollPane defilement = new JScrollPane(this.table);
+        defilement.setPreferredSize(new Dimension(largeur, hauteur));
 
+        // Mise en page du panneau avec titre
+        this.setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createTitledBorder(titre));
+        this.add(defilement, BorderLayout.CENTER);
 
     }
 
     /**
-     * Constructeur (complété)
+     * Constructeur sans centrage de colonnes
      *
      * @param titre
      * @param largeur
@@ -63,8 +93,7 @@ public class ComposantTable extends JPanel {
      * @param ml L'écouteur de clic souris qui sera averti si un évènement de clic survient sur cette table.
      */
     public void enregistrerEcouteur(MouseListener ml) {
-        // TODO : À compléter/modifier
-        System.err.println("Méthode ComposantTable.enregistrerEcouteur non implémentée.");
+     this.table.addMouseListener(ml);
     }
 
     /**
@@ -74,9 +103,7 @@ public class ComposantTable extends JPanel {
      * @return La ligne sélectionnée ou -1 síl n'y a aucune sélection.
      */
     public int ligneSelectionnee() {
-        // TODO : À compléter/modifier
-        System.err.println("Méthode ComposantTable.ligneSelectionnee non implémentée.");
-        return -1;
+        return this.table.getSelectedRow();
     }
 
     /**
@@ -96,8 +123,30 @@ public class ComposantTable extends JPanel {
      * @param donnees La matrice de données.
      */
     public void mettreAJour(Vector<Vector<String>> donnees) {
-        // TODO : À compléter/modifier
-        System.err.println("Méthode ComposantTable.mettreAJour non implémentée.");
+
+        DefaultTableModel modele = (DefaultTableModel) this.table.getModel();
+
+        // Vider la table
+        modele.setRowCount(0);
+
+        // Remplir avec les nouvelles données
+        if (donnees != null) {
+            for (Vector<String> ligne : donnees) {
+                modele.addRow(ligne);
+            }
+        }
+
+        // Reappliquer le centrage après la mise à jour
+        if (this.donneesCentrees != null) {
+            DefaultTableCellRenderer renduCentre = new DefaultTableCellRenderer();
+            renduCentre.setHorizontalAlignment(SwingConstants.CENTER);
+            for (int i = 0; i < this.donneesCentrees.length && i < this.table.getColumnCount(); i++) {
+                if (this.donneesCentrees[i]) {
+                    this.table.getColumnModel().getColumn(i).setCellRenderer(renduCentre);
+                }
+
+            }
+        }
     }
 
 }

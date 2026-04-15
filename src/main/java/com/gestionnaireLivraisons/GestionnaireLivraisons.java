@@ -691,8 +691,7 @@ public class GestionnaireLivraisons extends Observable implements GestionnaireEv
         // Affichage sur la console de l'IDE
         System.out.println(msg);
 
-        // TODO : À compléter/modifier
-        System.err.println("Méthode GestionnaireLivraisons.notifierEcouteursConsole non implémentée.");
-        return;
+       this.trace = msg;
+       this.notifierObservateurs();
     }
 }
